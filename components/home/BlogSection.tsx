@@ -1,5 +1,12 @@
+'use client';
+
 import { Calendar, ArrowRight, Tag } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Static blog data (no CMS for now)
 const blogPosts = [
@@ -33,16 +40,114 @@ const blogPosts = [
 ];
 
 export default function BlogSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const heading = sectionRef.current!.querySelector('.blog-heading');
+      const underline = sectionRef.current!.querySelector('.blog-underline');
+      const subtitle = sectionRef.current!.querySelector('.blog-subtitle');
+      const cards = sectionRef.current!.querySelectorAll('.blog-card');
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none none',
+        },
+      });
+
+      // Heading: split text feel with clip-path reveal
+      if (heading) {
+        tl.fromTo(
+          heading,
+          { opacity: 0, y: 30, clipPath: 'inset(0 0 100% 0)' },
+          { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)', duration: 0.7, ease: 'power3.out' },
+        );
+      }
+
+      // Underline expand from center
+      if (underline) {
+        tl.fromTo(
+          underline,
+          { scaleX: 0, transformOrigin: 'center' },
+          { scaleX: 1, duration: 0.4, ease: 'power2.out' },
+          '-=0.3',
+        );
+      }
+
+      // Subtitle
+      if (subtitle) {
+        tl.fromTo(
+          subtitle,
+          { opacity: 0, y: 15 },
+          { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' },
+          '-=0.2',
+        );
+      }
+
+      // Cards: stagger with 3D-like perspective entrance
+      if (cards.length > 0) {
+        tl.fromTo(
+          Array.from(cards),
+          {
+            opacity: 0,
+            y: 50,
+            rotateX: 10,
+            scale: 0.92,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            scale: 1,
+            duration: 0.6,
+            stagger: 0.12,
+            ease: 'back.out(1.4)',
+          },
+          '-=0.1',
+        );
+      }
+
+      // Add hover magnetic effect to cards
+      cards.forEach((card) => {
+        const el = card as HTMLElement;
+        el.addEventListener('mouseenter', () => {
+          gsap.to(el, {
+            y: -6,
+            scale: 1.02,
+            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.12)',
+            duration: 0.3,
+            ease: 'power2.out',
+          });
+        });
+        el.addEventListener('mouseleave', () => {
+          gsap.to(el, {
+            y: 0,
+            scale: 1,
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+            duration: 0.3,
+            ease: 'power2.out',
+          });
+        });
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="py-16 md:py-20">
+    <section ref={sectionRef} className="py-16 md:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-12">
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-dark mb-3">
+          <h2 className="blog-heading font-heading text-3xl md:text-4xl font-bold text-dark mb-3">
             Tài Liệu <span className="text-primary">Ôn Tập</span> Mới Nhất
           </h2>
-          <div className="w-16 h-1 bg-primary rounded-full mx-auto mb-4" />
-          <p className="text-muted max-w-xl mx-auto">
+          <div className="blog-underline w-16 h-1 bg-primary rounded-full mx-auto mb-4" />
+          <p className="blog-subtitle text-muted max-w-xl mx-auto">
             Kiến thức hữu ích về tâm lý học và phát triển bản thân
           </p>
         </div>
@@ -52,7 +157,8 @@ export default function BlogSection() {
           {blogPosts.map((post) => (
             <article
               key={post.id}
-              className="group bg-white rounded-2xl border border-border overflow-hidden transition-all duration-300 hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-1"
+              className="blog-card bg-white rounded-2xl border border-border overflow-hidden"
+              style={{ perspective: '1000px' }}
             >
               {/* Colored top bar */}
               <div className="h-1.5 gradient-primary" />
@@ -71,7 +177,7 @@ export default function BlogSection() {
                 </div>
 
                 {/* Title */}
-                <h3 className="font-heading font-semibold text-dark mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                <h3 className="font-heading font-semibold text-dark mb-2 line-clamp-2">
                   {post.title}
                 </h3>
 
@@ -83,7 +189,7 @@ export default function BlogSection() {
                 {/* Read more */}
                 <Link
                   href={post.slug}
-                  className="inline-flex items-center gap-1 text-sm font-medium text-primary group-hover:gap-2 transition-all"
+                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:gap-2 transition-all"
                 >
                   Đọc tiếp
                   <ArrowRight className="w-4 h-4" />

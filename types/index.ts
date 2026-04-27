@@ -11,6 +11,8 @@ export interface Category {
   description: string | null;
   iconUrl: string | null;
   quizCount?: number;
+  children?: { id: string; name: string; slug: string }[];
+  quizzes?: Quiz[];
 }
 
 export interface Quiz {
