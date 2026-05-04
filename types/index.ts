@@ -84,7 +84,58 @@ export interface QuizResult {
   timeSpentSecs: number;
   completedAt: string;
   mbtiDetail?: MBTIDetail;
+  scoredDetail?: ScoredResultData;
+  scaleDetail?: ScaleResultData;
 }
+
+export interface ScoredResultData {
+  correctCount: number;
+  totalQuestions: number;
+  percentage: number;
+  grade: string;
+}
+
+export interface ScaleResultData {
+  scaleScore: number;
+  scaleMax: number;
+  totalQuestions: number;
+  percentage: number;
+  level: string;
+}
+
+export interface PersonalityResultData {
+  resultType: string;
+  typeName: string;
+  description: string;
+  traits: string[];
+  scoreBreakdown: Record<string, number>;
+  timeSpentSecs: number;
+  completedAt: string;
+}
+
+// ============================================
+// Result Response Types
+// ============================================
+
+export interface LockedResultResponse {
+  isLocked: true;
+  quizTitle: string;
+  quizType: QuizType;
+  quizSlug: string;
+  completedAt: string;
+  timeSpentSecs: number;
+  unlockCode: string; // mã random hiện ở góc màn hình
+}
+
+export interface UnlockedResultResponse {
+  isLocked: false;
+  quizTitle: string;
+  quizType: QuizType;
+  quizSlug: string;
+  result: QuizResult;
+}
+
+export type ResultResponse = LockedResultResponse | UnlockedResultResponse;
 
 // ============================================
 // CPA Types

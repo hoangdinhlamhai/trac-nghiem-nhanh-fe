@@ -61,7 +61,7 @@ export default async function QuizPage({
   }
 
   return (
-    <main className="min-h-screen bg-light">
+    <div className="min-h-screen bg-transparent relative z-10">
       <QuizPlayer
         quizId={quiz.id}
         title={quiz.title}
@@ -72,6 +72,6 @@ export default async function QuizPage({
         timeLimitMins={quiz.timeLimitMins}
         questions={quiz.questions}
       />
-    </main>
+    </div>
   );
 }

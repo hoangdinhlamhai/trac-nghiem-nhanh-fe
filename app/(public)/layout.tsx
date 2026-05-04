@@ -1,5 +1,6 @@
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import ShootingStars from '@/components/ui/ShootingStars';
 
 export default function PublicLayout({
   children,
@@ -8,8 +9,9 @@ export default function PublicLayout({
 }) {
   return (
     <>
+      <ShootingStars />
       <Navbar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 relative z-10">{children}</main>
       <Footer />
     </>
   );

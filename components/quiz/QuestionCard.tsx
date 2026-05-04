@@ -46,7 +46,7 @@ export default function QuestionCard({
         transition={{ duration: 0.25, ease: 'easeInOut' }}
       >
         {/* Question text */}
-        <h2 className="font-heading text-lg md:text-xl font-semibold text-dark mb-6 leading-relaxed">
+        <h2 className="font-heading text-lg md:text-xl font-semibold mb-6 leading-relaxed" style={{ color: 'var(--text-main)' }}>
           {question.content}
         </h2>
 

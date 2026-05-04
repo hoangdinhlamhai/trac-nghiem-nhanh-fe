@@ -13,6 +13,7 @@ interface QuizState {
   answers: Record<string, string>; // questionId -> answerId
   isStarted: boolean;
   isCompleted: boolean;
+  hasSavedProgress?: boolean;
 }
 
 const STORAGE_PREFIX = 'quiz_progress_';
@@ -42,18 +43,24 @@ export function useQuiz({ questions, quizSlug }: UseQuizOptions) {
   const [state, setState] = useState<QuizState>(() => {
     const saved = loadState(quizSlug);
     if (saved && saved.isStarted && !saved.isCompleted) {
-      return saved;
+      return {
+        ...saved,
+        isStarted: false, // Force Intro screen to show
+        hasSavedProgress: true, // Flag to show "Resume" button
+      };
     }
     return {
       currentIndex: 0,
       answers: {},
       isStarted: false,
       isCompleted: false,
+      hasSavedProgress: false,
     };
   });
 
   // Persist to localStorage
   useEffect(() => {
+    // We only save if isStarted is true (user is actively taking the quiz)
     if (state.isStarted && !state.isCompleted) {
       saveState(quizSlug, state);
     }
@@ -65,14 +72,24 @@ export function useQuiz({ questions, quizSlug }: UseQuizOptions) {
   const progress = totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
 
   const startQuiz = useCallback(() => {
-    setState((prev) => ({ ...prev, isStarted: true }));
+    setState((prev) => ({ ...prev, isStarted: true, hasSavedProgress: false }));
   }, []);
+
+  const resetQuiz = useCallback(() => {
+    clearState(quizSlug);
+    setState({
+      currentIndex: 0,
+      answers: {},
+      isStarted: true,
+      isCompleted: false,
+      hasSavedProgress: false,
+    });
+  }, [quizSlug]);
 
   const selectAnswer = useCallback(
     (questionId: string, answerId: string) => {
       setState((prev) => {
         const newAnswers = { ...prev.answers, [questionId]: answerId };
-        const isLast = prev.currentIndex >= totalQuestions - 1;
         return {
           ...prev,
           answers: newAnswers,
@@ -80,7 +97,7 @@ export function useQuiz({ questions, quizSlug }: UseQuizOptions) {
         };
       });
     },
-    [totalQuestions],
+    []
   );
 
   const goNext = useCallback(() => {
@@ -102,7 +119,7 @@ export function useQuiz({ questions, quizSlug }: UseQuizOptions) {
       if (index < 0 || index >= totalQuestions) return;
       setState((prev) => ({ ...prev, currentIndex: index }));
     },
-    [totalQuestions],
+    [totalQuestions]
   );
 
   const completeQuiz = useCallback(() => {
@@ -124,12 +141,14 @@ export function useQuiz({ questions, quizSlug }: UseQuizOptions) {
     answers: state.answers,
     isStarted: state.isStarted,
     isCompleted: state.isCompleted,
+    hasSavedProgress: state.hasSavedProgress,
     totalQuestions,
     answeredCount,
     progress,
 
     // Actions
     startQuiz,
+    resetQuiz,
     selectAnswer,
     goNext,
     goBack,

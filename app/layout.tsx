@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
-import { Montserrat, Roboto } from 'next/font/google';
+import { Playfair_Display, Roboto } from 'next/font/google';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import './globals.css';
 
-const montserrat = Montserrat({
+const playfair = Playfair_Display({
   variable: '--font-heading',
   subsets: ['latin', 'vietnamese'],
   weight: ['400', '500', '600', '700', '800'],
@@ -39,8 +40,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={`${montserrat.variable} ${roboto.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-body">{children}</body>
+    <html lang="vi" className={`${playfair.variable} ${roboto.variable} h-full antialiased`} suppressHydrationWarning>
+      <body className="min-h-full flex flex-col font-body bg-starry text-foreground">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

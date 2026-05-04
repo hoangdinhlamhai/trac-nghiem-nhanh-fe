@@ -126,24 +126,24 @@ export default function CategorySection({ categories }: CategorySectionProps) {
   if (categories.length === 0) return null;
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} className="relative z-10 w-full backdrop-blur-sm border-t" style={{ borderColor: 'var(--glass-border)', backgroundColor: 'var(--glass-bg)' }}>
       {categories.map((category: Category) => (
-        <section key={category.id} className="category-section py-12 md:py-16 even:bg-light">
+        <section key={category.id} className="category-section py-12 md:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Section header = tên danh mục */}
             <div className="flex items-end justify-between mb-8">
               <div>
-                <h2 className="category-header font-heading text-2xl md:text-3xl font-bold text-dark mb-2">
+                <h2 className="category-header font-heading text-2xl md:text-3xl lg:text-4xl font-bold text-main mb-2">
                   {category.name}
                 </h2>
-                <div className="category-underline w-12 h-1 bg-primary rounded-full" />
+                <div className="category-underline w-12 h-1 rounded-full" style={{ backgroundColor: 'var(--text-muted)' }} />
                 {category.description && (
-                  <p className="category-desc text-muted mt-3 max-w-lg">{category.description}</p>
+                  <p className="category-desc text-muted mt-3 max-w-lg font-light">{category.description}</p>
                 )}
               </div>
               <Link
                 href={`/quiz-category/${category.slug}`}
-                className="view-all-btn hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-dark transition-colors"
+                className="view-all-btn hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-muted hover:text-main transition-colors"
               >
                 Xem tất cả ({category.quizCount || 0})
                 <ArrowRight className="w-4 h-4" />
@@ -160,7 +160,7 @@ export default function CategorySection({ categories }: CategorySectionProps) {
                 ))}
               </div>
             ) : (
-              <div className="empty-state text-center py-8 bg-white rounded-xl border border-border border-dashed">
+              <div className="empty-state text-center py-8 glass-panel-dark rounded-xl border border-dashed" style={{ borderColor: 'var(--glass-border)' }}>
                 <p className="text-muted text-sm">Sắp có đề thi mới — Quay lại sau nhé! 🚀</p>
               </div>
             )}
@@ -169,7 +169,10 @@ export default function CategorySection({ categories }: CategorySectionProps) {
             <div className="view-all-mobile sm:hidden text-center mt-6">
               <Link
                 href={`/quiz-category/${category.slug}`}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-primary text-primary text-sm font-medium hover:bg-primary hover:text-white transition-all"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border text-muted text-sm font-medium hover:text-main transition-all"
+                style={{ borderColor: 'var(--glass-border)' }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--glass-bg)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 Xem tất cả ({category.quizCount || 0})
                 <ArrowRight className="w-4 h-4" />

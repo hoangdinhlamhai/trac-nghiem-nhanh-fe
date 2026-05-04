@@ -1,17 +1,18 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import QuizCard from '@/components/quiz/QuizCard';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, FolderOpen } from 'lucide-react';
 import Link from 'next/link';
+import SubCategoryTabs from '@/components/category/SubCategoryTabs';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
-interface CategoryData {
+interface CategoryDetail {
   id: string;
   name: string;
   slug: string;
   description: string | null;
   iconUrl: string | null;
+  quizCount: number;
   quizzes: {
     id: string;
     title: string;
@@ -23,9 +24,27 @@ interface CategoryData {
     viewCount: number;
     completionCount: number;
   }[];
+  children: {
+    id: string;
+    name: string;
+    slug: string;
+    description: string | null;
+    quizCount: number;
+    quizzes: {
+      id: string;
+      title: string;
+      slug: string;
+      description: string | null;
+      quizType: string;
+      timeLimitMins: number;
+      totalQuestions: number;
+      viewCount: number;
+      completionCount: number;
+    }[];
+  }[];
 }
 
-async function getCategory(slug: string): Promise<CategoryData | null> {
+async function getCategory(slug: string): Promise<CategoryDetail | null> {
   try {
     const res = await fetch(`${API_URL}/categories/${slug}`, {
       next: { revalidate: 60 },
@@ -63,57 +82,58 @@ export default async function CategoryPage({
     notFound();
   }
 
+  const totalQuizzes =
+    category.quizzes.length +
+    category.children.reduce((sum, c) => sum + c.quizzes.length, 0);
+
   return (
-    <div className="min-h-screen bg-light">
+    <div className="min-h-screen bg-transparent">
       {/* Header */}
-      <div className="gradient-hero text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="gradient-hero relative overflow-hidden pt-28 pb-16 lg:pb-20" style={{ color: 'var(--text-main)' }}>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-white/60 hover:text-white text-sm mb-4 transition-colors"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm mb-6 transition-all backdrop-blur-md category-back-link"
+            style={{ borderColor: 'var(--glass-border)', color: 'var(--text-muted)' }}
           >
             <ArrowLeft className="w-4 h-4" />
-            Trang chủ
+            Về Trang chủ
           </Link>
-          <h1 className="font-heading text-3xl md:text-4xl font-bold mb-3">
-            {category.name}
-          </h1>
-          <p className="text-white/60 max-w-2xl">
-            {category.description || `Danh sách các bài test ${category.name}`}
+          
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 rounded-2xl border backdrop-blur-md shadow-glow" style={{ backgroundColor: 'var(--glass-bg)', borderColor: 'var(--glass-border)' }}>
+              <FolderOpen className="w-8 h-8 text-primary" />
+            </div>
+            <h1 className="font-heading text-4xl md:text-5xl font-extrabold" style={{ color: 'var(--text-main)' }}>
+              {category.name}
+            </h1>
+          </div>
+          
+          <p className="text-lg max-w-2xl mt-4 leading-relaxed font-light" style={{ color: 'var(--text-muted)' }}>
+            {category.description || `Khám phá các bài test ${category.name} chuyên sâu, giúp bạn đánh giá và phân tích một cách chính xác nhất.`}
           </p>
+          
+          <div className="flex items-center gap-6 mt-8 text-sm font-medium" style={{ color: 'var(--text-muted)' }}>
+            {category.children.length > 0 && (
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border" style={{ backgroundColor: 'var(--glass-bg)', borderColor: 'var(--glass-border)' }}>
+                <span className="w-2 h-2 rounded-full bg-primary-light"></span>
+                <span>{category.children.length} danh mục con</span>
+              </div>
+            )}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border" style={{ backgroundColor: 'var(--glass-bg)', borderColor: 'var(--glass-border)' }}>
+              <span className="w-2 h-2 rounded-full bg-accent"></span>
+              <span>{totalQuizzes} bài test</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Quiz list */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {category.quizzes.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-5xl mb-4">🧪</p>
-            <h3 className="font-heading text-xl font-semibold text-dark mb-2">
-              Chưa có đề nào
-            </h3>
-            <p className="text-muted">
-              Danh mục này sẽ được cập nhật sớm. Quay lại sau nhé!
-            </p>
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 mt-6 px-6 py-2.5 rounded-xl bg-primary text-white font-medium hover:bg-primary-dark transition-colors"
-            >
-              Về trang chủ
-            </Link>
-          </div>
-        ) : (
-          <>
-            <p className="text-sm text-muted mb-6">
-              {category.quizzes.length} bài test
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {category.quizzes.map((quiz) => (
-                <QuizCard key={quiz.id} quiz={quiz as any} />
-              ))}
-            </div>
-          </>
-        )}
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
+        <SubCategoryTabs
+          children={category.children}
+          parentQuizzes={category.quizzes}
+        />
       </div>
     </div>
   );

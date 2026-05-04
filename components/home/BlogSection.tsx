@@ -118,7 +118,7 @@ export default function BlogSection() {
           gsap.to(el, {
             y: -6,
             scale: 1.02,
-            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.12)',
+            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.3)',
             duration: 0.3,
             ease: 'power2.out',
           });
@@ -127,7 +127,7 @@ export default function BlogSection() {
           gsap.to(el, {
             y: 0,
             scale: 1,
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+            boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
             duration: 0.3,
             ease: 'power2.out',
           });
@@ -139,60 +139,60 @@ export default function BlogSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-16 md:py-20">
+    <section ref={sectionRef} className="relative z-10 w-full py-16 md:py-20 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
-        <div className="text-center mb-12">
-          <h2 className="blog-heading font-heading text-3xl md:text-4xl font-bold text-dark mb-3">
-            Tài Liệu <span className="text-primary">Ôn Tập</span> Mới Nhất
+        <div className="text-center mb-16">
+          <h2 className="blog-heading font-heading text-4xl md:text-5xl lg:text-6xl font-medium text-main mb-4 tracking-tight">
+            Tài Liệu Ôn Tập
           </h2>
-          <div className="blog-underline w-16 h-1 bg-primary rounded-full mx-auto mb-4" />
-          <p className="blog-subtitle text-muted max-w-xl mx-auto">
-            Kiến thức hữu ích về tâm lý học và phát triển bản thân
+          <div className="blog-underline w-16 h-1 rounded-full mx-auto mb-6" style={{ backgroundColor: 'var(--text-muted)' }} />
+          <p className="blog-subtitle text-muted max-w-xl mx-auto text-lg font-light">
+            Nền tảng kiến thức vững chắc cho hành trình thấu hiểu bản thân
           </p>
         </div>
 
         {/* Blog grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogPosts.map((post) => (
             <article
               key={post.id}
-              className="blog-card bg-white rounded-2xl border border-border overflow-hidden"
-              style={{ perspective: '1000px' }}
+              className="blog-card glass-panel-dark rounded-2xl border overflow-hidden"
+              style={{ perspective: '1000px', borderColor: 'var(--glass-border)' }}
             >
               {/* Colored top bar */}
-              <div className="h-1.5 gradient-primary" />
+              <div className="h-1" style={{ backgroundColor: 'var(--glass-border)' }} />
 
-              <div className="p-6">
+              <div className="p-8">
                 {/* Meta */}
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="flex items-center gap-1 text-xs text-muted">
+                <div className="flex items-center gap-4 mb-4">
+                  <span className="flex items-center gap-1.5 text-xs text-muted">
                     <Calendar className="w-3.5 h-3.5" />
                     {new Date(post.date).toLocaleDateString('vi-VN')}
                   </span>
-                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                  <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: 'var(--glass-bg)', color: 'var(--text-main)' }}>
                     <Tag className="w-3 h-3" />
                     {post.tag}
                   </span>
                 </div>
 
                 {/* Title */}
-                <h3 className="font-heading font-semibold text-dark mb-2 line-clamp-2">
+                <h3 className="font-heading font-medium text-xl text-main mb-3 line-clamp-2 leading-snug">
                   {post.title}
                 </h3>
 
                 {/* Excerpt */}
-                <p className="text-sm text-muted leading-relaxed line-clamp-3 mb-4">
+                <p className="text-sm text-muted leading-relaxed line-clamp-3 mb-6 font-light">
                   {post.excerpt}
                 </p>
 
                 {/* Read more */}
                 <Link
                   href={post.slug}
-                  className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:gap-2 transition-all"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-muted hover:text-main transition-all group"
                 >
-                  Đọc tiếp
-                  <ArrowRight className="w-4 h-4" />
+                  <span className="border-b pb-0.5 transition-colors" style={{ borderColor: 'var(--glass-border)' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--text-main)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--glass-border)'}>Đọc bài viết</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </article>

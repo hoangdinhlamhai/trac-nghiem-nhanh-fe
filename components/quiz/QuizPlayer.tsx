@@ -56,6 +56,12 @@ export default function QuizPlayer({
     startTimeRef.current = Date.now();
   }
 
+  function handleReset() {
+    quiz.resetQuiz();
+    timer.start();
+    startTimeRef.current = Date.now();
+  }
+
   function handleSelectAnswer(questionId: string, answerId: string) {
     quiz.selectAnswer(questionId, answerId);
     // Auto-advance after 500ms
@@ -103,14 +109,16 @@ export default function QuizPlayer({
   // Intro screen
   if (!quiz.isStarted) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-10">
+      <div className="max-w-4xl mx-auto px-4 pt-28 pb-10">
         <QuizIntro
           title={title}
           description={description}
           instruction={instruction}
           totalQuestions={questions.length}
           timeLimitMins={timeLimitMins}
+          hasSavedProgress={quiz.hasSavedProgress}
           onStart={handleStart}
+          onReset={handleReset}
         />
       </div>
     );
@@ -120,7 +128,7 @@ export default function QuizPlayer({
   const allAnswered = quiz.answeredCount >= questions.length;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6">
+    <div className="max-w-5xl mx-auto px-4 pt-28 pb-6">
       {/* Top bar: Timer + Progress */}
       <div className="flex items-center justify-between gap-4 mb-6">
         <div className="flex-1">
@@ -135,9 +143,9 @@ export default function QuizPlayer({
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
         {/* Main question area */}
-        <div className="bg-white rounded-2xl border border-border p-6 md:p-8 min-h-[400px] flex flex-col">
+        <div className="glass-panel-dark rounded-2xl p-6 md:p-8 min-h-[400px] flex flex-col">
           {/* Question number */}
-          <span className="text-xs text-muted font-medium mb-4">
+          <span className="text-xs font-medium mb-4" style={{ color: 'var(--text-muted)' }}>
             Câu {quiz.currentIndex + 1} / {quiz.totalQuestions}
           </span>
 
@@ -154,11 +162,18 @@ export default function QuizPlayer({
           </div>
 
           {/* Navigation buttons */}
-          <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
+          <div className="flex items-center justify-between mt-6 pt-4 border-t" style={{ borderColor: 'var(--glass-border)' }}>
             <button
               onClick={handleGoBack}
               disabled={quiz.currentIndex === 0}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-muted hover:text-dark hover:bg-light-secondary transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[var(--glass-bg)]"
+              style={{ color: 'var(--text-muted)' }}
+              onMouseEnter={(e) => {
+                if(quiz.currentIndex !== 0) e.currentTarget.style.color = 'var(--text-main)';
+              }}
+              onMouseLeave={(e) => {
+                if(quiz.currentIndex !== 0) e.currentTarget.style.color = 'var(--text-muted)';
+              }}
             >
               <ChevronLeft className="w-4 h-4" />
               Câu trước
