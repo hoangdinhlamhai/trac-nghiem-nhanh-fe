@@ -41,7 +41,7 @@ export default function HeroBanner() {
   return (
     <section ref={sectionRef} className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8">
       {/* Content wrapper */}
-      <div className="max-w-4xl mx-auto z-10 flex flex-col items-center justify-center mt-[-10vh]">
+      <div className="max-w-4xl mx-auto z-10 flex flex-col items-center justify-center mt-[-10vh]" style={{paddingTop: '100px'}}>
         
         <h1
           ref={titleRef}
