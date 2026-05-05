@@ -17,7 +17,7 @@ const blogPosts = [
       'Tìm hiểu về hệ thống phân loại tính cách MBTI, lịch sử hình thành và ý nghĩa của 16 nhóm tính cách.',
     tag: 'MBTI',
     date: '2026-04-20',
-    slug: '#',
+    slug: '/tai-lieu/mbti-la-gi',
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ const blogPosts = [
       'Hướng dẫn chi tiết cách trả lời các câu hỏi MBTI để nhận kết quả phản ánh đúng tính cách.',
     tag: 'Hướng dẫn',
     date: '2026-04-18',
-    slug: '#',
+    slug: '/tai-lieu/cach-lam-test-mbti',
   },
   {
     id: 3,
@@ -35,7 +35,7 @@ const blogPosts = [
       'Phân tích sự khác biệt giữa hai hệ thống đánh giá tính cách phổ biến nhất hiện nay.',
     tag: 'So sánh',
     date: '2026-04-15',
-    slug: '#',
+    slug: '/tai-lieu/so-sanh-mbti-disc',
   },
 ];
 
