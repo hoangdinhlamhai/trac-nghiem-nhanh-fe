@@ -1,39 +1,49 @@
 'use client';
 
-import { Calendar, ArrowRight, Tag, MessageCircle } from 'lucide-react';
+import { Calendar, ArrowRight, Tag } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-interface DiscussionItem {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  tag: string | null;
-  commentCount: number;
-  createdAt: string;
-}
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+// Static blog data (no CMS for now)
+const blogPosts = [
+  {
+    id: 1,
+    title: 'MBTI là gì? Tổng quan về 16 nhóm tính cách',
+    excerpt:
+      'Tìm hiểu về hệ thống phân loại tính cách MBTI, lịch sử hình thành và ý nghĩa của 16 nhóm tính cách.',
+    tag: 'MBTI',
+    date: '2026-04-20',
+    slug: '/tai-lieu/mbti-la-gi',
+  },
+  {
+    id: 2,
+    title: 'Cách làm bài test MBTI chính xác nhất',
+    excerpt:
+      'Hướng dẫn chi tiết cách trả lời các câu hỏi MBTI để nhận kết quả phản ánh đúng tính cách.',
+    tag: 'Hướng dẫn',
+    date: '2026-04-18',
+    slug: '/tai-lieu/cach-lam-test-mbti',
+  },
+  {
+    id: 3,
+    title: 'So sánh MBTI và DISC: Nên dùng bài test nào?',
+    excerpt:
+      'Phân tích sự khác biệt giữa hai hệ thống đánh giá tính cách phổ biến nhất hiện nay.',
+    tag: 'So sánh',
+    date: '2026-04-15',
+    slug: '/tai-lieu/so-sanh-mbti-disc',
+  },
+];
 
 export default function BlogSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [posts, setPosts] = useState<DiscussionItem[]>([]);
-
-  // Fetch discussions from API
-  useEffect(() => {
-    fetch(`${API_URL}/discussions`)
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data: DiscussionItem[]) => setPosts(data))
-      .catch(() => {});
-  }, []);
 
   useEffect(() => {
-    if (!sectionRef.current || posts.length === 0) return;
+    if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {
       const heading = sectionRef.current!.querySelector('.blog-heading');
@@ -126,9 +136,7 @@ export default function BlogSection() {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [posts]);
-
-  if (posts.length === 0) return null;
+  }, []);
 
   return (
     <section ref={sectionRef} className="relative z-10 w-full py-16 md:py-20 bg-transparent">
@@ -146,7 +154,7 @@ export default function BlogSection() {
 
         {/* Blog grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map((post) => (
+          {blogPosts.map((post) => (
             <article
               key={post.id}
               className="blog-card glass-panel-dark rounded-2xl border overflow-hidden"
@@ -160,14 +168,12 @@ export default function BlogSection() {
                 <div className="flex items-center gap-4 mb-4">
                   <span className="flex items-center gap-1.5 text-xs text-muted">
                     <Calendar className="w-3.5 h-3.5" />
-                    {new Date(post.createdAt).toLocaleDateString('vi-VN')}
+                    {new Date(post.date).toLocaleDateString('vi-VN')}
                   </span>
-                  {post.tag && (
-                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: 'var(--glass-bg)', color: 'var(--text-main)' }}>
-                      <Tag className="w-3 h-3" />
-                      {post.tag}
-                    </span>
-                  )}
+                  <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: 'var(--glass-bg)', color: 'var(--text-main)' }}>
+                    <Tag className="w-3 h-3" />
+                    {post.tag}
+                  </span>
                 </div>
 
                 {/* Title */}
@@ -180,20 +186,14 @@ export default function BlogSection() {
                   {post.excerpt}
                 </p>
 
-                {/* Footer: comment count + read more */}
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--text-muted)' }}>
-                    <MessageCircle className="w-3.5 h-3.5" />
-                    {post.commentCount} bình luận
-                  </span>
-                  <Link
-                    href={`/thao-luan/${post.slug}`}
-                    className="inline-flex items-center gap-2 text-sm font-medium text-muted hover:text-main transition-all group"
-                  >
-                    <span className="border-b pb-0.5 transition-colors" style={{ borderColor: 'var(--glass-border)' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--text-main)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--glass-border)'}>Tham gia thảo luận</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
+                {/* Read more */}
+                <Link
+                  href={post.slug}
+                  className="inline-flex items-center gap-2 text-sm font-medium text-muted hover:text-main transition-all group"
+                >
+                  <span className="border-b pb-0.5 transition-colors" style={{ borderColor: 'var(--glass-border)' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--text-main)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--glass-border)'}>Đọc bài viết</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
               </div>
             </article>
           ))}
