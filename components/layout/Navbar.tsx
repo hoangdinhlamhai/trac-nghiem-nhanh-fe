@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 const navLinks = [
   { label: 'Trang chủ', href: '/' },
-  { label: 'Test MBTI', href: '/quiz/mbti-quiz' },
+  { label: 'Test MBTI', href: '/quiz-category/test-mbti' },
   { label: 'Test Tâm Lý', href: '/quiz-category/test-tam-ly' },
   { label: 'Giới thiệu', href: '/gioi-thieu' },
 ];
