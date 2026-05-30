@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import ResultClient from '@/components/result/ResultClient';
+import { ResultPageClient } from '@/components/result/ResultPageClient';
 import type { ResultResponse } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
@@ -45,7 +45,7 @@ export default async function ResultPage({ params }: ResultPageProps) {
     if (!res.ok) return notFound();
 
     const data: ResultResponse = await res.json();
-    return <ResultClient initialData={data} resultId={id} />;
+    return <ResultPageClient initialData={data} resultId={id} />;
   } catch {
     return notFound();
   }

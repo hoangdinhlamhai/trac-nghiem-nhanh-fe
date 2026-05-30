@@ -230,3 +230,11 @@
 .orb-info {
   background: var(--color-info);
 }
+
+/* SenlyzerLock - shake animation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+.animate-shake { animation: shake 0.4s ease-in-out; }
